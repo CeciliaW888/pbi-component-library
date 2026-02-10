@@ -6,7 +6,8 @@ import {
   Home, Palette, Type, LayoutGrid, Layers,
   BarChart3, LineChart, PieChart, Table2,
   Gauge, Map, MousePointerClick, SlidersHorizontal,
-  CreditCard, Square, ChevronDown, ChevronRight, Sparkles, PanelLeft
+  CreditCard, Square, ChevronDown, ChevronRight, Sparkles, PanelLeft,
+  Activity, DollarSign, FolderKanban, Heart
 } from 'lucide-react';
 
 const iconMap = {
@@ -116,6 +117,10 @@ export default function Sidebar() {
 
           <NavSection title="Pages" defaultOpen={false}>
             <NavItem href="/pages/executive-dashboard" icon={LayoutGrid} label="Executive Dashboard" />
+            <NavItem href="/pages/operational-report" icon={Activity} label="Operational Report" />
+            <NavItem href="/pages/financial-report" icon={DollarSign} label="Financial Report" />
+            <NavItem href="/pages/project-management" icon={FolderKanban} label="Project Management" />
+            <NavItem href="/pages/customer-satisfaction" icon={Heart} label="Customer Satisfaction" />
           </NavSection>
         </nav>
       )}

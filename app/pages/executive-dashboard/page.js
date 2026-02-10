@@ -6,6 +6,8 @@ import LineChartComponent from '@/components/pbi/LineChartComponent';
 import DonutChart from '@/components/pbi/DonutChart';
 import DataTable from '@/components/pbi/DataTable';
 import Slicer from '@/components/pbi/Slicer';
+import ThemePanel from '@/components/ui/ThemePanel';
+import { useTheme } from '@/context/ThemeContext';
 import { Layers, Eye, EyeOff } from 'lucide-react';
 
 const atomicOverlayColors = {
@@ -16,9 +18,10 @@ const atomicOverlayColors = {
 
 export default function ExecutiveDashboardPage() {
   const [overlay, setOverlay] = useState(null);
+  const { getCSSOverrides } = useTheme();
 
   return (
-    <div className="max-w-6xl mx-auto px-8 py-8 space-y-6">
+    <div className="max-w-6xl mx-auto px-8 py-8 space-y-6" style={getCSSOverrides()}>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-on-surface">Executive Dashboard</h1>
@@ -40,6 +43,9 @@ export default function ExecutiveDashboardPage() {
           ))}
         </div>
       </div>
+
+      {/* Theme Panel */}
+      <ThemePanel />
 
       {/* Dashboard Layout */}
       <div className="bg-surface-variant/20 rounded-3xl border border-outline-variant/20 p-6 space-y-4">

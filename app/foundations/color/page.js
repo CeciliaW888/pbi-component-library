@@ -1,37 +1,88 @@
 'use client';
 import { useState } from 'react';
-import { Download, Copy, Check, Sun, Moon } from 'lucide-react';
-import { PBI_THEME_JSON } from '@/data/components';
+import { Download, Copy, Check, Sun, Moon, RotateCcw, Paintbrush } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
 
-const palette = [
-  { name: 'Primary', var: '--primary', light: '#6366f1', dark: '#a5b4fc' },
-  { name: 'Secondary', var: '--secondary', light: '#8b5cf6', dark: '#c4b5fd' },
+const systemColorKeys = [
+  { key: 'primary', label: 'Primary', var: '--primary' },
+  { key: 'secondary', label: 'Secondary', var: '--secondary' },
+  { key: 'success', label: 'Success', var: '--success' },
+  { key: 'error', label: 'Error', var: '--error' },
+  { key: 'warning', label: 'Warning', var: '--warning' },
+];
+
+const readOnlyPalette = [
   { name: 'Surface', var: '--surface', light: '#ffffff', dark: '#1c1b20' },
   { name: 'Background', var: '--background', light: '#faf9f7', dark: '#141218' },
   { name: 'On Surface', var: '--on-surface', light: '#1c1b1f', dark: '#e6e0e9' },
   { name: 'Outline', var: '--outline', light: '#79747e', dark: '#938f99' },
-  { name: 'Success', var: '--success', light: '#16a34a', dark: '#4ade80' },
-  { name: 'Error', var: '--error', light: '#dc2626', dark: '#f87171' },
-  { name: 'Warning', var: '--warning', light: '#f59e0b', dark: '#fbbf24' },
 ];
 
-const dataColors = [
-  { hex: '#6366f1', name: 'Indigo' },
-  { hex: '#8b5cf6', name: 'Violet' },
-  { hex: '#ec4899', name: 'Pink' },
-  { hex: '#f97316', name: 'Orange' },
-  { hex: '#14b8a6', name: 'Teal' },
-  { hex: '#06b6d4', name: 'Cyan' },
-  { hex: '#eab308', name: 'Yellow' },
-  { hex: '#ef4444', name: 'Red' },
-];
+function ColorPicker({ label, value, onChange, cssVar }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <div
+      className="bg-surface rounded-2xl border border-outline-variant/30 overflow-hidden group hover:border-primary/40 transition-all hover:shadow-md"
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+    >
+      <div className="relative h-20 flex items-center justify-center" style={{ backgroundColor: value }}>
+        <input
+          type="color"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        />
+        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/30 backdrop-blur-sm text-white text-xs font-medium transition-opacity ${hover ? 'opacity-100' : 'opacity-60'}`}>
+          <Paintbrush size={12} />
+          Click to edit
+        </div>
+      </div>
+      <div className="px-4 py-2.5 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-on-surface">{label}</p>
+          <p className="text-xs text-on-surface-variant font-mono">{cssVar}</p>
+        </div>
+        <span className="text-xs font-mono text-on-surface-variant bg-surface-variant/50 px-2 py-1 rounded">{value}</span>
+      </div>
+    </div>
+  );
+}
+
+function DataColorPicker({ color, index, onChange }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <div
+      className="flex-1 group"
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+    >
+      <div className="relative w-full h-16 rounded-xl mb-2 overflow-hidden cursor-pointer" style={{ backgroundColor: color.hex }}>
+        <input
+          type="color"
+          value={color.hex}
+          onChange={e => onChange(index, e.target.value)}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        />
+        <div className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity pointer-events-none ${hover ? 'opacity-100' : 'opacity-0'}`}>
+          <Paintbrush size={14} className="text-white" />
+        </div>
+      </div>
+      <p className="text-xs font-medium text-on-surface text-center">{color.name}</p>
+      <p className="text-[10px] text-on-surface-variant text-center font-mono">{color.hex}</p>
+    </div>
+  );
+}
 
 export default function ColorPage() {
+  const { theme, updateColor, updateDataColor, resetTheme, getThemeJSON, defaultTheme } = useTheme();
   const [copied, setCopied] = useState(false);
 
+  const themeJSON = getThemeJSON();
+  const jsonString = JSON.stringify(themeJSON, null, 2);
+
+  const hasChanges = JSON.stringify(theme) !== JSON.stringify(defaultTheme);
+
   const exportTheme = () => {
-    const json = JSON.stringify(PBI_THEME_JSON, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -41,23 +92,62 @@ export default function ColorPage() {
   };
 
   const copyTheme = () => {
-    navigator.clipboard.writeText(JSON.stringify(PBI_THEME_JSON, null, 2));
+    navigator.clipboard.writeText(jsonString);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <div className="max-w-5xl mx-auto px-8 py-12 space-y-12">
-      <div>
-        <h1 className="text-3xl font-bold text-on-surface mb-2">Color</h1>
-        <p className="text-on-surface-variant">Data visualization palette with WCAG contrast ratios and Power BI theme export.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-on-surface mb-2">Color</h1>
+          <p className="text-on-surface-variant">Data visualization palette with WCAG contrast ratios and Power BI theme export.</p>
+        </div>
+        {hasChanges && (
+          <button onClick={resetTheme} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-surface border border-outline-variant/30 text-on-surface hover:bg-surface-variant transition-colors">
+            <RotateCcw size={14} /> Reset to Defaults
+          </button>
+        )}
       </div>
 
-      {/* System Colors */}
+      {/* Customizable Theme Banner */}
+      <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/5 rounded-2xl border border-primary/20 p-5 flex items-center gap-4">
+        <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+          <Paintbrush size={20} className="text-primary" />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-on-surface">Live Theme Customizer</h3>
+          <p className="text-xs text-on-surface-variant">Click any color swatch below to customize your theme. Changes update the Power BI Theme JSON in real-time. Use the customized theme in the Pages section.</p>
+        </div>
+        {hasChanges && (
+          <span className="ml-auto inline-flex items-center px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium animate-pulse">
+            Modified
+          </span>
+        )}
+      </div>
+
+      {/* Editable System Colors */}
+      <section>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Theme Colors — Click to Customize</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {systemColorKeys.map(c => (
+            <ColorPicker
+              key={c.key}
+              label={c.label}
+              value={theme[c.key]}
+              onChange={val => updateColor(c.key, val)}
+              cssVar={c.var}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Read-only System Colors */}
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-wider text-on-surface-variant mb-4">System Colors</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {palette.map(c => (
+          {readOnlyPalette.map(c => (
             <div key={c.name} className="bg-surface rounded-2xl border border-outline-variant/30 overflow-hidden">
               <div className="flex h-16">
                 <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: c.light }}>
@@ -66,7 +156,7 @@ export default function ColorPage() {
                   </div>
                 </div>
                 <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: c.dark }}>
-                  <div className="flex items-center gap-1 text-[10px] font-mono" style={{ color: c.dark === '#141218' || c.dark === '#1c1b20' ? '#ccc' : c.dark.startsWith('#e') || c.dark.startsWith('#f') || c.dark.startsWith('#c') || c.dark.startsWith('#a') || c.dark.startsWith('#9') || c.dark.startsWith('#4a') ? '#333' : '#fff' }}>
+                  <div className="flex items-center gap-1 text-[10px] font-mono" style={{ color: '#ccc' }}>
                     <Moon size={10} /> {c.dark}
                   </div>
                 </div>
@@ -80,28 +170,29 @@ export default function ColorPage() {
         </div>
       </section>
 
-      {/* Data Colors */}
+      {/* Editable Data Colors */}
       <section>
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Data Visualization Colors</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Data Visualization Colors — Click to Customize</h2>
         <div className="flex gap-2 mb-4">
-          {dataColors.map(c => (
-            <div key={c.hex} className="flex-1">
-              <div className="w-full h-16 rounded-xl mb-2" style={{ backgroundColor: c.hex }} />
-              <p className="text-xs font-medium text-on-surface text-center">{c.name}</p>
-              <p className="text-[10px] text-on-surface-variant text-center font-mono">{c.hex}</p>
-            </div>
+          {theme.dataColors.map((c, i) => (
+            <DataColorPicker key={i} color={c} index={i} onChange={updateDataColor} />
           ))}
         </div>
       </section>
 
-      {/* PBI Theme Export */}
+      {/* PBI Theme Export - Live JSON */}
       <section>
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-on-surface-variant mb-4">Export as Power BI Theme</h2>
+        <div className="flex items-center gap-3 mb-4">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-on-surface-variant">Export as Power BI Theme</h2>
+          {hasChanges && (
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/15 text-primary">LIVE — reflects your changes</span>
+          )}
+        </div>
         <div className="bg-surface rounded-2xl border border-outline-variant/30 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3 bg-surface-variant/50 border-b border-outline-variant/20">
             <span className="text-sm font-medium text-on-surface">pbi-design-system-theme.json</span>
             <div className="flex gap-2">
-              <button onClick={copyTheme} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface text-on-surface hover:bg-surface-container-high transition-colors">
+              <button onClick={copyTheme} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface text-on-surface hover:bg-surface-container-high transition-colors border border-outline-variant/30">
                 {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
                 {copied ? 'Copied' : 'Copy'}
               </button>
@@ -111,7 +202,7 @@ export default function ColorPage() {
             </div>
           </div>
           <pre className="p-5 text-xs font-mono text-on-surface overflow-x-auto max-h-96">
-            {JSON.stringify(PBI_THEME_JSON, null, 2)}
+            {jsonString}
           </pre>
         </div>
       </section>
