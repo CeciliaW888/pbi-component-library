@@ -35,7 +35,7 @@ export default function GaugeComponent({ variant = 'half', state = 'default' }) 
         <p className="text-sm mt-1" style={{ color: zone.color }}>{zone.label}</p>
         <div className="flex gap-1 mt-3">
           {gaugeStatusZones.map(z => (
-            <div key={z.label} className="flex-1 h-2 rounded-full" style={{ backgroundColor: current >= z.pct - 24 ? z.color : '#e2e8f0' }} />
+            <div key={z.label} className="flex-1 h-2 rounded-full" style={{ backgroundColor: current >= z.pct - 24 ? z.color : 'var(--surface-variant)' }} />
           ))}
         </div>
       </div>
@@ -55,7 +55,7 @@ export default function GaugeComponent({ variant = 'half', state = 'default' }) 
         <circle cx="90" cy="90" r={radius} fill="none" stroke="var(--surface-variant)" strokeWidth="12"
           strokeDasharray={circumference} strokeDashoffset={isFull ? 0 : circumference / 2}
           transform={isFull ? '' : 'rotate(180 90 90)'} strokeLinecap="round" />
-        <circle cx="90" cy="90" r={radius} fill="none" stroke="url(#gaugeGrad)" strokeWidth="12"
+        <circle cx="90" cy="90" r={radius} fill="none" stroke={`url(#gaugeGrad-${variant})`} strokeWidth="12"
           strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
           transform={isFull ? 'rotate(-90 90 90)' : 'rotate(180 90 90)'} strokeLinecap="round"
           style={{ transition: 'stroke-dashoffset 1s ease' }} />
@@ -70,9 +70,9 @@ export default function GaugeComponent({ variant = 'half', state = 'default' }) 
           Performance
         </text>
         <defs>
-          <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#8b5cf6" />
+          <linearGradient id={`gaugeGrad-${variant}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="var(--primary)" />
+            <stop offset="100%" stopColor="var(--secondary)" />
           </linearGradient>
         </defs>
       </svg>

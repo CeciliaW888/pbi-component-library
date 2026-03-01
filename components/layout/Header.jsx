@@ -46,14 +46,14 @@ export default function Header() {
           >
             <Search size={16} />
             <span>Search...</span>
-            <kbd className="text-[10px] ml-4 bg-surface px-1.5 py-0.5 rounded font-mono">⌘K</kbd>
+            <kbd className="text-[10px] ml-4 bg-surface px-1.5 py-0.5 rounded font-mono">Ctrl+K</kbd>
           </button>
         )}
       </div>
 
       <div className="flex items-center gap-2">
         <a
-          href="https://github.com"
+          href="https://github.com/CeciliaW888/pbi-component-library"
           target="_blank"
           rel="noopener noreferrer"
           className="p-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors"

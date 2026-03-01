@@ -107,14 +107,14 @@ export function ThemeProvider({ children }) {
     '--success': theme.success,
     '--error': theme.error,
     '--warning': theme.warning,
-    '--data-1': theme.dataColors[0]?.hex,
-    '--data-2': theme.dataColors[1]?.hex,
-    '--data-3': theme.dataColors[2]?.hex,
-    '--data-4': theme.dataColors[3]?.hex,
-    '--data-5': theme.dataColors[4]?.hex,
-    '--data-6': theme.dataColors[5]?.hex,
-    '--data-7': theme.dataColors[6]?.hex,
-    '--data-8': theme.dataColors[7]?.hex,
+    '--pbi-1': theme.dataColors[0]?.hex,
+    '--pbi-2': theme.dataColors[1]?.hex,
+    '--pbi-3': theme.dataColors[2]?.hex,
+    '--pbi-4': theme.dataColors[3]?.hex,
+    '--pbi-5': theme.dataColors[4]?.hex,
+    '--pbi-6': theme.dataColors[5]?.hex,
+    '--pbi-7': theme.dataColors[6]?.hex,
+    '--pbi-8': theme.dataColors[7]?.hex,
   }), [theme]);
 
   return (

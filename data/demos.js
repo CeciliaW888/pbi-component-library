@@ -1,6 +1,25 @@
 // Demo data for PBI components
 // Keep all hardcoded demo/sample data here for easy maintenance
 
+// Read PBI data colors from CSS custom properties at render time
+export function getPbiColors() {
+  if (typeof window === 'undefined') return ['#6366f1', '#8b5cf6', '#ec4899', '#f97316', '#14b8a6', '#06b6d4', '#eab308', '#ef4444'];
+  const style = getComputedStyle(document.documentElement);
+  return Array.from({ length: 8 }, (_, i) => style.getPropertyValue(`--pbi-${i + 1}`).trim() || ['#6366f1', '#8b5cf6', '#ec4899', '#f97316', '#14b8a6', '#06b6d4', '#eab308', '#ef4444'][i]);
+}
+
+export function getGridColor() {
+  if (typeof window === 'undefined') return 'rgba(0,0,0,0.05)';
+  const style = getComputedStyle(document.documentElement);
+  const outlineVariant = style.getPropertyValue('--outline-variant').trim();
+  return outlineVariant ? outlineVariant + '33' : 'rgba(0,0,0,0.05)';
+}
+
+export function getSurfaceColor() {
+  if (typeof window === 'undefined') return '#ffffff';
+  return getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#ffffff';
+}
+
 export const kpiCardVariations = {
   revenue: {
     title: 'Revenue',
@@ -170,7 +189,7 @@ export const donutChartConfigs = {
   nested: {
     type: 'doughnut',
     data: {
-      labels: ['A', 'B', 'C', 'D', 'E', 'F'],
+      labels: ['Online', 'In-Store', 'Partner', 'Online Sub', 'In-Store Sub', 'Partner Sub', 'Direct'],
       datasets: [
         { data: [40, 30, 30], backgroundColor: ['#6366f1', '#8b5cf6', '#ec4899'], borderWidth: 2, borderColor: '#fff' },
         { data: [25, 25, 20, 30], backgroundColor: ['#a5b4fc', '#c4b5fd', '#f9a8d4', '#fdba74'], borderWidth: 2, borderColor: '#fff' },
@@ -197,6 +216,23 @@ export const tableHeatmapValues = [
   [3, 5, 8, 6],
   [7, 4, 5, 9],
 ];
+
+export const matrixData = {
+  rows: [
+    { category: 'Electronics', subcategories: [
+      { name: 'Phones', q1: '$120K', q2: '$145K', q3: '$132K', q4: '$158K' },
+      { name: 'Laptops', q1: '$89K', q2: '$95K', q3: '$102K', q4: '$118K' },
+    ]},
+    { category: 'Clothing', subcategories: [
+      { name: 'Mens', q1: '$45K', q2: '$52K', q3: '$48K', q4: '$67K' },
+      { name: 'Womens', q1: '$62K', q2: '$71K', q3: '$58K', q4: '$82K' },
+    ]},
+    { category: 'Home', subcategories: [
+      { name: 'Furniture', q1: '$78K', q2: '$65K', q3: '$82K', q4: '$91K' },
+      { name: 'Decor', q1: '$23K', q2: '$28K', q3: '$31K', q4: '$35K' },
+    ]},
+  ],
+};
 
 export const gaugeDefaults = {
   value: 72,

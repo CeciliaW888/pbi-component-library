@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
-import { donutChartConfigs } from '@/data/demos';
+import { donutChartConfigs, getPbiColors, getSurfaceColor } from '@/data/demos';
 
 if (typeof window !== 'undefined') Chart.register(...registerables);
 
-export default function DonutChart({ variant = 'donut', state = 'default' }) {
+export default function DonutChart({ variant = 'donut', state = 'default', title }) {
   const chartRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -13,9 +13,30 @@ export default function DonutChart({ variant = 'donut', state = 'default' }) {
     if (!canvasRef.current) return;
     if (chartRef.current) chartRef.current.destroy();
     const config = donutChartConfigs[variant] || donutChartConfigs.donut;
+    const data = JSON.parse(JSON.stringify(config.data));
+    const pbiColors = getPbiColors();
+    const surfaceColor = getSurfaceColor();
+
+    // Apply theme colors
+    data.datasets.forEach((ds) => {
+      if (Array.isArray(ds.backgroundColor)) {
+        ds.backgroundColor = ds.backgroundColor.map((_, i) => pbiColors[i % pbiColors.length]);
+      }
+      // Fix border colors for dark mode
+      if (ds.borderColor === '#fff' || ds.borderColor === '#e2e8f0') {
+        ds.borderColor = surfaceColor;
+      }
+    });
+
+    // Fix semicircle "Remaining" segment
+    if (variant === 'semicircle' && data.datasets[0]?.backgroundColor) {
+      data.datasets[0].backgroundColor[0] = pbiColors[0];
+      data.datasets[0].backgroundColor[1] = surfaceColor;
+    }
+
     chartRef.current = new Chart(canvasRef.current, {
       type: config.type,
-      data: JSON.parse(JSON.stringify(config.data)),
+      data,
       options: {
         responsive: true, maintainAspectRatio: false,
         animation: { duration: 800, easing: 'easeOutQuart' },
@@ -30,6 +51,7 @@ export default function DonutChart({ variant = 'donut', state = 'default' }) {
 
   return (
     <div className={`bg-surface rounded-2xl border border-outline-variant/30 p-5 transition-all duration-300 ${stateClass}`}>
+      {title && <p className="text-xs font-medium text-on-surface-variant mb-3">{title}</p>}
       <div className="h-64 max-w-xs mx-auto"><canvas ref={canvasRef} /></div>
     </div>
   );

@@ -17,7 +17,7 @@ export default function Slicer({ variant = 'dropdown', state = 'default' }) {
 
   if (variant === 'chips') {
     return (
-      <div className={`space-y-2 transition-all duration-300 ${stateClass}`}>
+      <div className={`bg-surface rounded-2xl border border-outline-variant/30 p-4 space-y-2 transition-all duration-300 ${stateClass}`}>
         <p className="text-xs font-medium text-on-surface-variant">Region</p>
         <div className="flex flex-wrap gap-2">
           {slicerOptions.map(opt => {
