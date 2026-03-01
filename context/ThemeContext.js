@@ -43,6 +43,32 @@ export function ThemeProvider({ children }) {
     setTheme(defaultTheme);
   }, []);
 
+  const importTheme = useCallback((pbiThemeJson) => {
+    const colorNames = ['Color 1', 'Color 2', 'Color 3', 'Color 4', 'Color 5', 'Color 6', 'Color 7', 'Color 8'];
+    const newTheme = { ...defaultTheme };
+
+    if (pbiThemeJson.name) newTheme.name = pbiThemeJson.name;
+    if (pbiThemeJson.tableAccent) newTheme.primary = pbiThemeJson.tableAccent;
+    if (pbiThemeJson.center) newTheme.secondary = pbiThemeJson.center;
+    if (pbiThemeJson.good) newTheme.success = pbiThemeJson.good;
+    if (pbiThemeJson.bad) newTheme.error = pbiThemeJson.bad;
+    if (pbiThemeJson.minimum) newTheme.warning = pbiThemeJson.minimum;
+    if (pbiThemeJson.foreground?.color) newTheme.foreground = pbiThemeJson.foreground.color;
+    if (pbiThemeJson.background?.color) newTheme.background = pbiThemeJson.background.color;
+
+    if (Array.isArray(pbiThemeJson.dataColors)) {
+      newTheme.dataColors = pbiThemeJson.dataColors.slice(0, 8).map((hex, i) => ({
+        hex,
+        name: colorNames[i] || `Color ${i + 1}`,
+      }));
+      while (newTheme.dataColors.length < 8) {
+        newTheme.dataColors.push({ hex: defaultTheme.dataColors[newTheme.dataColors.length].hex, name: colorNames[newTheme.dataColors.length] });
+      }
+    }
+
+    setTheme(newTheme);
+  }, []);
+
   const getThemeJSON = useCallback(() => {
     return {
       name: theme.name,
@@ -92,7 +118,7 @@ export function ThemeProvider({ children }) {
   }), [theme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, updateColor, updateDataColor, resetTheme, getThemeJSON, getCSSOverrides, defaultTheme }}>
+    <ThemeContext.Provider value={{ theme, updateColor, updateDataColor, resetTheme, importTheme, getThemeJSON, getCSSOverrides, defaultTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -1,12 +1,12 @@
 'use client';
 import { useState } from 'react';
-import { ChevronDown, Check, X, Calendar } from 'lucide-react';
+import { ChevronDown, Check, Calendar } from 'lucide-react';
+import { slicerOptions } from '@/data/demos';
 
 export default function Slicer({ variant = 'dropdown', state = 'default' }) {
-  const [selected, setSelected] = useState(['North']);
+  const [selected, setSelected] = useState([slicerOptions[0]]);
   const [open, setOpen] = useState(false);
   const [rangeValue, setRangeValue] = useState(65);
-  const options = ['North', 'South', 'East', 'West', 'Central'];
 
   const stateClass = {
     default: '',
@@ -20,7 +20,7 @@ export default function Slicer({ variant = 'dropdown', state = 'default' }) {
       <div className={`space-y-2 transition-all duration-300 ${stateClass}`}>
         <p className="text-xs font-medium text-on-surface-variant">Region</p>
         <div className="flex flex-wrap gap-2">
-          {options.map(opt => {
+          {slicerOptions.map(opt => {
             const isSelected = selected.includes(opt);
             return (
               <button
@@ -45,7 +45,7 @@ export default function Slicer({ variant = 'dropdown', state = 'default' }) {
       <div className={`bg-surface rounded-2xl border border-outline-variant/30 p-4 w-56 transition-all duration-300 ${stateClass}`}>
         <p className="text-xs font-medium text-on-surface-variant mb-3">Region</p>
         <div className="space-y-0.5">
-          {options.map(opt => {
+          {slicerOptions.map(opt => {
             const isSelected = selected.includes(opt);
             return (
               <button
@@ -112,7 +112,7 @@ export default function Slicer({ variant = 'dropdown', state = 'default' }) {
       </button>
       {open && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-surface rounded-xl border border-outline-variant/30 shadow-xl z-10 py-1">
-          {options.map(opt => (
+          {slicerOptions.map(opt => (
             <button
               key={opt}
               onClick={() => { setSelected([opt]); setOpen(false); }}

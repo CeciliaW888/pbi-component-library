@@ -1,49 +1,6 @@
 'use client';
-import { TrendingUp, TrendingDown, Minus, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-
-const variations = {
-  revenue: {
-    title: 'Revenue',
-    label: 'Total Revenue',
-    value: '$2.4M',
-    change: '+12.5%',
-    changeType: 'positive',
-    period: 'vs last quarter',
-  },
-  trend: {
-    title: 'Trend Sparkline',
-    label: 'Active Users',
-    value: '84,293',
-    change: '+8.2%',
-    changeType: 'positive',
-    period: 'last 30 days',
-    sparkline: [40, 45, 38, 52, 48, 60, 55, 70, 65, 80, 75, 84],
-  },
-  target: {
-    title: 'Target vs Actual',
-    label: 'Sales Target',
-    value: '$1.8M',
-    target: '$2.0M',
-    progress: 90,
-    changeType: 'warning',
-  },
-  multi: {
-    title: 'Multi-metric',
-    label: 'Performance',
-    metrics: [
-      { label: 'Revenue', value: '$2.4M', change: '+12%' },
-      { label: 'Users', value: '84K', change: '+8%' },
-      { label: 'Conversion', value: '3.2%', change: '-0.4%' },
-    ],
-  },
-  compact: {
-    title: 'Compact',
-    label: 'Orders',
-    value: '1,247',
-    change: '+5.3%',
-    changeType: 'positive',
-  },
-};
+import { TrendingUp, TrendingDown, ArrowUpRight } from 'lucide-react';
+import { kpiCardVariations } from '@/data/demos';
 
 function Sparkline({ data, width = 120, height = 32 }) {
   const max = Math.max(...data);
@@ -59,7 +16,7 @@ function Sparkline({ data, width = 120, height = 32 }) {
 }
 
 export default function KPICard({ variant = 'revenue', state = 'default' }) {
-  const v = variations[variant] || variations.revenue;
+  const v = kpiCardVariations[variant] || kpiCardVariations.revenue;
 
   const stateClass = {
     default: '',

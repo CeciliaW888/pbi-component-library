@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Download, Copy, Check, Sun, Moon, RotateCcw, Paintbrush } from 'lucide-react';
+import { Download, Copy, Check, Sun, Moon, RotateCcw, Paintbrush, Upload } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 
 const systemColorKeys = [
@@ -73,8 +73,9 @@ function DataColorPicker({ color, index, onChange }) {
 }
 
 export default function ColorPage() {
-  const { theme, updateColor, updateDataColor, resetTheme, getThemeJSON, defaultTheme } = useTheme();
+  const { theme, updateColor, updateDataColor, resetTheme, importTheme, getThemeJSON, defaultTheme } = useTheme();
   const [copied, setCopied] = useState(false);
+  const [importError, setImportError] = useState(null);
 
   const themeJSON = getThemeJSON();
   const jsonString = JSON.stringify(themeJSON, null, 2);
@@ -97,19 +98,51 @@ export default function ColorPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleImport = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportError(null);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target.result);
+        if (!json.dataColors && !json.tableAccent) {
+          setImportError('Invalid PBI theme file: missing required fields');
+          return;
+        }
+        importTheme(json);
+      } catch {
+        setImportError('Invalid JSON file');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-8 py-12 space-y-12">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-on-surface mb-2">Color</h1>
-          <p className="text-on-surface-variant">Data visualization palette with WCAG contrast ratios and Power BI theme export.</p>
+          <p className="text-on-surface-variant">Data visualization palette with WCAG contrast ratios and Power BI theme import/export.</p>
         </div>
-        {hasChanges && (
-          <button onClick={resetTheme} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-surface border border-outline-variant/30 text-on-surface hover:bg-surface-variant transition-colors">
-            <RotateCcw size={14} /> Reset to Defaults
-          </button>
-        )}
+        <div className="flex gap-2">
+          <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-surface border border-outline-variant/30 text-on-surface hover:bg-surface-variant transition-colors cursor-pointer">
+            <Upload size={14} /> Import Theme
+            <input type="file" accept=".json" onChange={handleImport} className="hidden" />
+          </label>
+          {hasChanges && (
+            <button onClick={resetTheme} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-surface border border-outline-variant/30 text-on-surface hover:bg-surface-variant transition-colors">
+              <RotateCcw size={14} /> Reset
+            </button>
+          )}
+        </div>
       </div>
+      {importError && (
+        <div className="bg-error/10 border border-error/30 rounded-xl px-4 py-3 text-sm text-error">
+          {importError}
+        </div>
+      )}
 
       {/* Customizable Theme Banner */}
       <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/5 rounded-2xl border border-primary/20 p-5 flex items-center gap-4">

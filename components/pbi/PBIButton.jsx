@@ -1,17 +1,9 @@
 'use client';
-
-const variants = {
-  primary: { base: 'bg-primary text-on-primary hover:opacity-90 shadow-sm', label: 'Primary' },
-  secondary: { base: 'bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80', label: 'Secondary' },
-  ghost: { base: 'bg-transparent text-primary hover:bg-primary-container/30 border border-outline-variant/50', label: 'Ghost' },
-  icon: { base: 'bg-surface-variant text-on-surface hover:bg-surface-container-high', label: 'Icon Only', isIcon: true },
-  toggle: { base: '', label: 'Toggle' },
-};
-
 import { Plus, Download, Filter, ChevronRight, Bookmark } from 'lucide-react';
+import { buttonVariants } from '@/data/demos';
 
 export default function PBIButton({ variant = 'primary', state = 'default' }) {
-  const v = variants[variant] || variants.primary;
+  const v = buttonVariants[variant] || buttonVariants.primary;
 
   const stateClass = {
     default: '',

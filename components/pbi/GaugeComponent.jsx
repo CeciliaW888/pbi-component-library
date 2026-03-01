@@ -1,10 +1,10 @@
 'use client';
+import { gaugeDefaults, gaugeStatusZones } from '@/data/demos';
 
 export default function GaugeComponent({ variant = 'half', state = 'default' }) {
   const stateClass = { default: '', hover: 'shadow-xl border-primary/30', selected: 'ring-2 ring-primary', disabled: 'opacity-40 grayscale' }[state] || '';
 
-  const value = 72;
-  const target = 85;
+  const { value, target } = gaugeDefaults;
 
   if (variant === 'linear') {
     return (
@@ -26,21 +26,15 @@ export default function GaugeComponent({ variant = 'half', state = 'default' }) 
   }
 
   if (variant === 'status') {
-    const zones = [
-      { label: 'Critical', pct: 25, color: '#ef4444' },
-      { label: 'Warning', pct: 50, color: '#f59e0b' },
-      { label: 'Good', pct: 75, color: '#6366f1' },
-      { label: 'Excellent', pct: 100, color: '#16a34a' },
-    ];
     const current = 78;
-    const zone = zones.find(z => current <= z.pct) || zones[3];
+    const zone = gaugeStatusZones.find(z => current <= z.pct) || gaugeStatusZones[3];
 
     return (
       <div className={`bg-surface rounded-2xl border border-outline-variant/30 p-5 text-center transition-all duration-300 ${stateClass}`}>
         <p className="text-3xl font-bold text-on-surface">{current}%</p>
         <p className="text-sm mt-1" style={{ color: zone.color }}>{zone.label}</p>
         <div className="flex gap-1 mt-3">
-          {zones.map(z => (
+          {gaugeStatusZones.map(z => (
             <div key={z.label} className="flex-1 h-2 rounded-full" style={{ backgroundColor: current >= z.pct - 24 ? z.color : '#e2e8f0' }} />
           ))}
         </div>
